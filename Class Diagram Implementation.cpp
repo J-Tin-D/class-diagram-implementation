@@ -92,7 +92,8 @@ int Order::orderCounter = 0;
 
 // Display Products
 void displayProducts(Product* products[], int size) {
-    cout << "\nAvailable Products:\nID| Name          | Price\n";
+    cout << "\nAvailable Products:\n";
+    cout << "ID| Name          | Price\n";
     cout << "------------------------------\n";
     for (int i = 0; i < size; i++) {
         cout << products[i]->productId << " | " << products[i]->name << " | $" << products[i]->price << "\n";
@@ -111,8 +112,9 @@ int main() {
     ShoppingCart cart;
     Order orderHistory[10];
     int orderCount = 0;
+    bool running = true;
 
-    while (true) {
+    while (running) {
         cout << "\n===================";
         cout << "\n Main Menu ";
         cout << "\n===================";
@@ -131,7 +133,8 @@ int main() {
         if (choice == 1) {
             displayProducts(products, productCount);
             int id, qty;
-            while (true) {
+            bool addingProduct = true;
+            while (addingProduct) {
                 cout << "\nEnter Product ID to add to the Shopping Cart (press 0 to go back): ";
                 cin >> id;
 
@@ -142,7 +145,7 @@ int main() {
                     continue;
                 }
 
-                if (id == 0) break;
+                if (id == 0) addingProduct = false;
 
                 Product* selectedProduct = nullptr;
                 for (int i = 0; i < productCount; i++) {
@@ -174,19 +177,13 @@ int main() {
             cart.displayCart();
             if (cart.getItemCount() > 0) {
                 string confirm;
-                while (true) {
+                bool checkingOut = true;
+                while (checkingOut) {
                     cout << "\nProceed to checkout? (Y/N): ";
                     cin >> confirm;
-
-                    if (confirm == "Y" || confirm == "y" || confirm == "N" || confirm == "n") {
-                        break;
-                    }
-
-                    cin.clear();
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    cout << "[!] Invalid input! Please enter 'Y' or 'N'.\n";
+                    if (confirm == "Y" || confirm == "y" || confirm == "N" || confirm == "n") checkingOut = false;
+                    else cout << "[!] Invalid input! Please enter 'Y' or 'N'.\n";
                 }
-
                 if (confirm == "Y" || confirm == "y") {
                     orderHistory[orderCount++] = Order(cart);
                     cart.clearCart();
@@ -200,11 +197,9 @@ int main() {
         }
         else if (choice == 4) {
             cout << "\nThank you for shopping! Goodbye!\n";
-            break;
+            running = false;
         }
-        else {
-            cout << "\n[!] Invalid choice!\n";
-        }
+        else cout << "\n[!] Invalid choice!\n";
     }
     return 0;
 }
